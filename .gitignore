@@ -1,0 +1,14 @@
+# Ignore all files and directories in mysql/data
+mysql/data/
+
+# Ignore environment files
+.env
+
+# Ignore Composer's vendor directory
+/vendor/
+
+# Ignore node_modules
+/node_modules/
+
+# Ignore .env files
+.env
