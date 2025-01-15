@@ -1,50 +1,68 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # PHP service
-  php:
-    build:
-      context: .
-      dockerfile: php/Dockerfile
-    container_name: php
-    volumes:
-      - ./laravel:/var/www/html
-    networks:
-      - my_network
-    ports:
-      - "9000:9000"
-
-  # Nginx service
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./laravel:/var/www/html
-    networks:
-      - my_network
-    ports:
-      - "80:80"
-
-  # MySQL service
-  mysql:
-    image: mysql:5.7
+  db:
+    image: mysql:8.0
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: laravel
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_pass
     volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - my_network
+      - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
 
-networks:
-  my_network:
-    driver: bridge
+  php1:
+    build:
+      context: ./php1
+    container_name: php1
+    volumes:
+      - ./app:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel_user
+      DB_PASSWORD: laravel_pass
+    depends_on:
+      - db
+
+  php2:
+    build:
+      context: ./php2
+    container_name: php2
+    volumes:
+      - ./app:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel_user
+      DB_PASSWORD: laravel_pass
+    depends_on:
+      - db
+
+  nginx1:
+    build:
+      context: ./nginx1
+    container_name: nginx1
+    ports:
+      - "8081:80"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - php1
+
+  nginx2:
+    build:
+      context: ./nginx2
+    container_name: nginx2
+    ports:
+      - "8082:80"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - php2
 
 volumes:
-  mysql-data:
-    driver: local
+  db_data:
