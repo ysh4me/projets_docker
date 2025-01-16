@@ -20,6 +20,7 @@ services:
     container_name: php1
     volumes:
       - ./app:/var/www/html
+      - ./app/.env.php1:/var/www/html/.env
     environment:
       DB_HOST: db
       DB_DATABASE: laravel
@@ -34,6 +35,7 @@ services:
     container_name: php2
     volumes:
       - ./app:/var/www/html
+      - ./app/.env.php2:/var/www/html/.env
     environment:
       DB_HOST: db
       DB_DATABASE: laravel
