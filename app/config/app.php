@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Facade;
 
+error_log('SERVER_NAME (env): ' . env('SERVER_NAME', 'Non défini'));
+
 return [
 
     /*
@@ -15,6 +17,7 @@ return [
     |
     */
 
+    'server_name' => env('SERVER_NAME', 'Non défini'),
     'name' => env('APP_NAME', 'Laravel'),
 
     /*

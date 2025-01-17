@@ -1,5 +1,25 @@
 <?php
 
+use Dotenv\Dotenv;
+
+/*
+|--------------------------------------------------------------------------
+| Load Environment Variables
+|--------------------------------------------------------------------------
+|
+| If the application is running locally, we will load the `.env` file to
+| populate environment variables. This is a feature of Laravel itself
+| that helps to keep configuration out of the source code.
+|
+*/
+
+if (file_exists(dirname(__DIR__) . '/.env')) {
+    $dotenv = Dotenv::createImmutable(dirname(__DIR__));
+    $dotenv->load();
+    error_log('SERVER_NAME (Dotenv _ENV): ' . ($_ENV['SERVER_NAME'] ?? 'Non défini'));
+    error_log('SERVER_NAME (Dotenv getenv): ' . (getenv('SERVER_NAME') ?: 'Non défini'));
+}
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application

@@ -22,6 +22,7 @@ services:
       - ./app:/var/www/html
       - ./app/.env.php1:/var/www/html/.env
     environment:
+      SERVER_NAME: nginx1
       DB_HOST: db
       DB_DATABASE: laravel
       DB_USERNAME: laravel_user
@@ -37,6 +38,7 @@ services:
       - ./app:/var/www/html
       - ./app/.env.php2:/var/www/html/.env
     environment:
+      SERVER_NAME: nginx2
       DB_HOST: db
       DB_DATABASE: laravel
       DB_USERNAME: laravel_user
