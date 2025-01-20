@@ -11,16 +11,17 @@ services:
       MYSQL_PASSWORD: laravel_pass
     volumes:
       - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+
 
   php1:
     build:
       context: ./php1
     container_name: php1
     volumes:
-      - ./app:/var/www/html
-      - ./app/.env.php1:/var/www/html/.env
+      - ./app1:/var/www/html
+      - node_modules1:/var/www/html/node_modules
+      - vendor1:/var/www/html/vendor
+      - ./app1/.env:/var/www/html/.env
     environment:
       SERVER_NAME: nginx1
       DB_HOST: db
@@ -29,14 +30,18 @@ services:
       DB_PASSWORD: laravel_pass
     depends_on:
       - db
+      - node_modules1
+      - vendor1
 
   php2:
     build:
       context: ./php2
     container_name: php2
     volumes:
-      - ./app:/var/www/html
-      - ./app/.env.php2:/var/www/html/.env
+      - ./app2:/var/www/html
+      - node_modules2:/var/www/html/node_modules
+      - vendor2:/var/www/html/vendor
+      - ./app2/.env:/var/www/html/.env
     environment:
       SERVER_NAME: nginx2
       DB_HOST: db
@@ -45,6 +50,8 @@ services:
       DB_PASSWORD: laravel_pass
     depends_on:
       - db
+      - node_modules2
+      - vendor2
 
   nginx1:
     build:
@@ -53,7 +60,7 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - ./app:/var/www/html
+      - ./app1:/var/www/html
     depends_on:
       - php1
 
@@ -64,9 +71,50 @@ services:
     ports:
       - "8082:80"
     volumes:
-      - ./app:/var/www/html
+      - ./app2:/var/www/html
     depends_on:
       - php2
 
+  node_modules1:
+    image: node:16
+    container_name: node_modules1
+    working_dir: /var/www/html
+    volumes:
+      - ./app1:/var/www/html
+      - node_modules1:/var/www/html/node_modules
+    entrypoint: ["sh", "-c", "npm install && tail -f /dev/null"]
+
+  node_modules2:
+    image: node:16
+    container_name: node_modules2
+    working_dir: /var/www/html
+    volumes:
+      - ./app2:/var/www/html
+      - node_modules2:/var/www/html/node_modules
+    entrypoint: ["sh", "-c", "npm install && tail -f /dev/null"]
+
+  vendor1:
+    image: composer:latest
+    container_name: vendor1
+    working_dir: /var/www/html
+    volumes:
+      - ./app1:/var/www/html
+      - vendor1:/var/www/html/vendor
+    entrypoint: ["sh", "-c", "composer install && ls -l /var/www/html/vendor && tail -f /dev/null"]
+
+  vendor2:
+    image: composer:latest
+    container_name: vendor2
+    working_dir: /var/www/html
+    volumes:
+      - ./app2:/var/www/html
+      - vendor2:/var/www/html/vendor
+    entrypoint: ["sh", "-c", "composer install && ls -l /var/www/html/vendor && tail -f /dev/null"]
+
+
 volumes:
   db_data:
+  node_modules1:
+  node_modules2:
+  vendor1:
+  vendor2:
