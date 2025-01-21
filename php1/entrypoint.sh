@@ -7,6 +7,9 @@ npm run build
 echo "Generating application key..."
 php artisan key:generate
 
+echo "Running migrations and seeds..."
+php artisan migrate:fresh --seed
+
 echo "Clearing configuration cache..."
 php artisan config:clear
 
